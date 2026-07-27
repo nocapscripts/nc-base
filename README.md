@@ -11,7 +11,7 @@ A minimal, but extensible FiveM framework designed for building scalable FiveM s
 
 - **Player System**
   - Added commands registry
-
+  - Added vehicle exports and vehicle management
 
 
 
