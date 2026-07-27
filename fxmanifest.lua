@@ -3,8 +3,8 @@ game 'gta5'
 lua54 'yes'
 
 name 'nc-base'
-author 'NoCapSripts'
-version '0.1.0'
+author 'NoCapScripts'
+version '1.0.1'
 description 'Custom FiveM framework TypeScriptis: playerid, jobid, gangid ja events'
 
 -- oxmysql on andmebaasi jaoks kohustuslik dependency
@@ -27,5 +27,6 @@ exports {
 server_exports {
   'GetPlayerData',
   'GetJob',
-  'GetGang'
+  'GetGang',
+  'regCommand'
 }

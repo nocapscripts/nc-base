@@ -7,6 +7,15 @@ A minimal, but extensible FiveM framework designed for building scalable FiveM s
 
 ---
 
+# Fixes & Updates
+
+- **Player System**
+  - Added commands registry
+
+
+
+
+
 # Features
 
 - **Player System**
@@ -561,42 +570,6 @@ import { Player } from '@/server/classes/Player';
 ```
 
 
-Configured:
-
-```
-tsconfig.json
-webpack.config.js
-```
-
----
-
-# Obfuscation
-
-Build uses:
-
-```
-webpack-obfuscator
-```
-
-
-Enabled:
-
-- Hexadecimal identifiers
-- String array encoding
-- Base64 strings
-
-
-Disabled:
-
-- controlFlowFlattening
-- deadCodeInjection
-- selfDefending
-
-
-Reason:
-
-Better FiveM performance.
-
 ---
 
 # Creating Extensions
@@ -663,6 +636,43 @@ global.exports['nc-base']
 ```
 
 ---
+
+
+Register Commands: 
+
+```ts
+import { registerCommand } from '@/server/commands/register';
+
+registerCommand({
+    name: '',
+    handler: () => {
+        
+    }
+})
+```
+
+```lua
+exports['nc-base']:regCommand({
+
+    name = "hello",
+
+    permission = "user",
+
+    handler = function(ctx)
+
+        print(
+            "Player source:",
+            ctx.source
+        )
+
+        print(
+            "Args:",
+            json.encode(ctx.args)
+        )
+
+    end
+})
+```
 
 # Roadmap
 
