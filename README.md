@@ -730,9 +730,3 @@ Planned:
 
 
 ---
-
-# License
-
-Custom FiveM framework.
-
-Free to modify and extend for your own server.
