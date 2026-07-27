@@ -1,0 +1,18 @@
+{
+  "framework": {
+    "name": "nc-base",
+    "resourceName": "nc-base",
+    "startingCash": 500,
+    "startingBank": 2500,
+    "defaultJob": "unemployed",
+    "defaultSpawn": {
+      "x": -269.4,
+      "y": -955.3,
+      "z": 31.2
+    }
+  },
+  "database": {
+    "playersTable": "players"
+  },
+  "paycheckIntervalMs"    : 10 * 60 * 1000
+}

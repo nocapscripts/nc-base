@@ -1,0 +1,65 @@
+{
+  "ballas": {
+    "name": "ballas",
+    "label": "Ballas",
+    "isGang": true,
+    "territory": "Davis",
+    "grades": [
+      {
+        "grade": 0,
+        "label": "Liige",
+        "salary": 0,
+        "items": [
+          {
+            "name": "weapon_knife",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "grade": 1,
+        "label": "Sõdur",
+        "salary": 0,
+        "items": [
+          {
+            "name": "weapon_pistol",
+            "count": 1,
+            "metadata": {
+              "ammo": 12
+            }
+          }
+        ]
+      },
+      {
+        "grade": 2,
+        "label": "Pealik",
+        "salary": 0,
+        "isBoss": true
+      }
+    ]
+  },
+  "vagos": {
+    "name": "vagos",
+    "label": "Vagos",
+    "isGang": true,
+    "territory": "East Los Santos",
+    "grades": [
+      {
+        "grade": 0,
+        "label": "Liige",
+        "salary": 0
+      },
+      {
+        "grade": 1,
+        "label": "Sõdur",
+        "salary": 0
+      },
+      {
+        "grade": 2,
+        "label": "Pealik",
+        "salary": 0,
+        "isBoss": true
+      }
+    ]
+  }
+}

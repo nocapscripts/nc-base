@@ -1,0 +1,148 @@
+{
+  "unemployed": {
+    "name": "unemployed",
+    "label": "Töötu",
+    "grades": [
+      {
+        "grade": 0,
+        "label": "Kodanik",
+        "salary": 50
+      }
+    ]
+  },
+  "police": {
+    "name": "police",
+    "label": "Politsei",
+    "grades": [
+      {
+        "grade": 0,
+        "label": "Kadett",
+        "salary": 100,
+        "items": [
+          {
+            "name": "radio",
+            "count": 1
+          },
+          {
+            "name": "weapon_stungun",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "grade": 1,
+        "label": "Ametnik",
+        "salary": 150,
+        "items": [
+          {
+            "name": "radio",
+            "count": 1
+          },
+          {
+            "name": "weapon_pistol",
+            "count": 1,
+            "metadata": {
+              "ammo": 12
+            }
+          }
+        ]
+      },
+      {
+        "grade": 2,
+        "label": "Kaptenleitnant",
+        "salary": 200,
+        "items": [
+          {
+            "name": "radio",
+            "count": 1
+          },
+          {
+            "name": "weapon_pistol",
+            "count": 1,
+            "metadata": {
+              "ammo": 12
+            }
+          }
+        ]
+      },
+      {
+        "grade": 3,
+        "label": "Ülem",
+        "salary": 250,
+        "isBoss": true,
+        "items": [
+          {
+            "name": "radio",
+            "count": 1
+          }
+        ]
+      }
+    ]
+  },
+  "ambulance": {
+    "name": "ambulance",
+    "label": "Kiirabi",
+    "grades": [
+      {
+        "grade": 0,
+        "label": "Praktikant",
+        "salary": 90,
+        "items": [
+          {
+            "name": "bandage",
+            "count": 5
+          }
+        ]
+      },
+      {
+        "grade": 1,
+        "label": "Parameedik",
+        "salary": 140,
+        "items": [
+          {
+            "name": "bandage",
+            "count": 5
+          },
+          {
+            "name": "radio",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "grade": 2,
+        "label": "Arst",
+        "salary": 190,
+        "isBoss": true,
+        "items": [
+          {
+            "name": "radio",
+            "count": 1
+          }
+        ]
+      }
+    ]
+  },
+  "mechanic": {
+    "name": "mechanic",
+    "label": "Mehaanik",
+    "grades": [
+      {
+        "grade": 0,
+        "label": "Praktikant",
+        "salary": 80
+      },
+      {
+        "grade": 1,
+        "label": "Mehaanik",
+        "salary": 120
+      },
+      {
+        "grade": 2,
+        "label": "Töökoja juhataja",
+        "salary": 170,
+        "isBoss": true
+      }
+    ]
+  }
+}
