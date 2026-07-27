@@ -1,3 +1,6 @@
+**FiveM Roleplay Custom Server built with TypeScript. Currently in testing phase. The future of the project is not yet decided — it may become a fully released server or potentially an open-source project.**
+
+
 # nc-base — Custom FiveM Framework (TypeScript)
 
 A minimal, but extensible FiveM framework designed for building scalable FiveM servers.
