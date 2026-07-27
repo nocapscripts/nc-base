@@ -1,32 +1,89 @@
 fx_version 'cerulean'
 game 'gta5'
+
 lua54 'yes'
 
 name 'nc-base'
 author 'NoCapScripts'
-version '1.0.1'
-description 'Custom FiveM framework TypeScriptis: playerid, jobid, gangid ja events'
+version '1.0.2'
+description 'Custom FiveM TypeScript framework with players, jobs, gangs, vehicles, commands and permissions'
 
--- oxmysql on andmebaasi jaoks kohustuslik dependency
+
+-- Dependencies
+
 dependency 'oxmysql'
+dependency 'ox_lib'
+dependency 'ox_inventory'
+
+
+-- Shared
+
+shared_scripts {
+
+}
+
+
+-- Server
 
 server_scripts {
-  '@oxmysql/lib/MySQL.lua',
-  'dist/server/server.js'
+
+    '@oxmysql/lib/MySQL.lua',
+
+    'dist/server/server.js'
+
 }
+
+
+
+-- Client
 
 client_scripts {
-  'dist/client/client.js'
+
+    'dist/client/client.js'
+
 }
 
--- kliendi <-> serveri jagatud data (nt configid) ekspordiks
-exports {
-  'GetPlayerData'
-}
+
+
+-- Server Exports
 
 server_exports {
-  'GetPlayerData',
-  'GetJob',
-  'GetGang',
-  'regCommand'
+
+    -- Player
+
+    'GetPlayerData',
+
+
+    -- Jobs / gangs
+
+    'GetJob',
+
+    'GetGang',
+
+
+
+    -- Commands
+
+    'regCommand',
+
+
+
+    -- Vehicles
+
+    'GetVehicle',
+
+    'GetPlayerVehicles',
+
+    'AddVehicle',
+
+    'StoreVehicle',
+
+    'TakeOutVehicle',
+
+    'RemoveVehicle',
+
+    'SaveVehicle',
+
+    'SetVehicleFuel'
+
 }

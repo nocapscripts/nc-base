@@ -673,6 +673,47 @@ exports['nc-base']:regCommand({
     end
 })
 ```
+# Vehicle System
+```lua 
+-- Get
+
+local vehicle = exports['nc-base']:GetVehicle(plate)
+
+
+-- Add
+
+exports['nc-base']:AddVehicle(data)
+
+
+
+-- Garage
+
+exports['nc-base']:StoreVehicle(plate, garage)
+
+
+exports['nc-base']:TakeOutVehicle(plate)
+
+
+
+-- Fuel
+
+exports['nc-base']:SetVehicleFuel(plate, fuel)
+
+
+
+-- Save
+
+exports['nc-base']:SaveVehicle(plate)
+
+
+
+-- Delete
+
+exports['nc-base']:RemoveVehicle(plate)
+
+
+
+```
 
 # Roadmap
 
