@@ -1,4 +1,4 @@
-**FiveM Roleplay Custom Server built with TypeScript. Currently in testing phase. The future of the project is not yet decided — it may become a fully released server or potentially an open-source project.**
+**FiveM Roleplay Custom Server built with TypeScript. Currently in testing phase. The future of the project is not yet decided — it may become a fully released server or potentially an open-source project. Leave any problems under [issues](https://github.com/nocapscripts/nc-base/issues).**
 
 
 # nc-base — Custom FiveM Framework (TypeScript)
