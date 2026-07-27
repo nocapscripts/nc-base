@@ -650,7 +650,7 @@ registerCommand({
     }
 })
 ```
-
+Lua :
 ```lua
 exports['nc-base']:regCommand({
 
