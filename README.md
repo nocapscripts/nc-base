@@ -1,104 +1,684 @@
-# nc-base — custom FiveM framework (TypeScript)
+# nc-base — Custom FiveM Framework (TypeScript)
 
-A minimal, but extensible FiveM framework that includes:
+A minimal, but extensible FiveM framework designed for building scalable FiveM servers.
 
-- **Player class** (`src/server/classes/Player.ts`) — wraps player state (cash, job, gang, metadata)
-- **Database** (`src/server/database/Database.ts`) — uses `oxmysql` resource exports (must be running as a separate resource on the server)
-- **Inventory** (`src/server/inventory/InventoryManager.ts`) — uses `ox_inventory` resource exports to give/remove items, register stashes, etc.
-- **Jobs** (`src/server/config/jobs.ts`, `src/server/managers/JobManager.ts`) — grades, salaries, paychecks, boss permissions, and starter kits
-- **Gangs** (`src/server/config/gangs.ts`, `src/server/managers/GangManager.ts`) — similar to jobs, plus territories
-- **Events** — server-side `on`/`onNet` listeners and `emitNet` for sending to clients (see `src/server/main.ts` and `src/client/main.ts`)
-- **`@/` path alias** — imports look like `@/server/...` / `@/shared/...`, regardless of file depth
-- **Light obfuscation** — the build output (`dist/`) is run through `webpack-obfuscator` (hex identifier names, string array), without a heavy performance cost
+---
 
-## Requirements
+# Features
 
-1. FXServer with the `oxmysql` resource (install and start it before this resource — in `server.cfg`: `ensure oxmysql` before `ensure nc-base`)
-2. `ox_lib` and `ox_inventory` resources (for inventory) — download from [overextended/ox_lib](https://github.com/overextended/ox_lib) and [overextended/ox_inventory](https://github.com/overextended/ox_inventory)
-3. A MySQL/MariaDB database, `set mysql_connection_string "mysql://user:pass@localhost/database"` in `server.cfg`
-4. Node.js + npm/yarn for building
+- **Player System**
+  - Player class wrapper
+  - Cash / bank management
+  - Job system
+  - Gang system
+  - Metadata storage
+  - Database saving/loading
 
-## Installation
+- **Database System**
+  - `oxmysql` integration
+  - Async database queries
+  - MySQL/MariaDB support
+
+- **Inventory System**
+  - `ox_inventory` integration
+  - Add/remove items
+  - Item checking
+  - Stash registration
+  - Starter kits
+
+- **Jobs System**
+  - Grades
+  - Salaries
+  - Boss permissions
+  - Hiring
+  - Firing
+  - Promotions
+  - Starter items
+
+- **Gang System**
+  - Grades
+  - Territories
+  - Members
+  - Boss permissions
+  - Starter items
+
+- **Developer Features**
+  - TypeScript support
+  - `@/` import aliases
+  - Webpack build system
+  - Lightweight code obfuscation
+  - Server/client event system
+
+---
+
+# Requirements
+
+Required:
+
+- FXServer
+- Node.js
+- npm/yarn
+- MySQL/MariaDB
+
+FiveM resources:
+
+- oxmysql
+- ox_lib
+- ox_inventory
+
+
+Download:
+
+- https://github.com/overextended/ox_lib
+- https://github.com/overextended/ox_inventory
+
+
+---
+
+# Installation
+
+Install dependencies:
 
 ```bash
 npm install
+```
+
+Build the resource:
+
+```bash
 npm run build
 ```
 
-This produces `dist/server/server.js` and `dist/client/client.js`, which `fxmanifest.lua` already references.
+Output:
 
-Import the database schema:
+```
+dist/
+ ├── server/server.js
+ └── client/client.js
+```
+
+Import database:
 
 ```bash
-mysql -u user -p database < sql/install.sql
+mysql -u username -p database < sql/install.sql
 ```
 
-`server.cfg` (order matters — dependencies before this resource):
-```
+---
+
+# server.cfg Setup
+
+Resource order matters.
+
+```cfg
 ensure oxmysql
 ensure ox_lib
 ensure ox_inventory
 ensure nc-base
 ```
 
-## `@/` path alias
+Database:
 
-Imports don't use relative paths (`../../shared/types`) — they use the `@/` alias, which points to the `src` folder:
-
-```ts
-import { PlayerRow } from '@/shared/types';
-import { InventoryManager } from '@/server/inventory/InventoryManager';
+```cfg
+set mysql_connection_string "mysql://user:password@localhost/database"
 ```
 
-The alias is configured in two places, and they must match:
-- `tsconfig.json` → `compilerOptions.baseUrl` + `paths`
-- `webpack.config.js` → `resolve.alias` (since `ts-loader` runs in `transpileOnly` mode, it doesn't read `tsconfig.json`'s `paths` itself — webpack needs to know the alias separately)
+---
 
-## Obfuscation
+# Project Structure
 
-`npm run build` runs the `webpack-obfuscator` plugin on both the server and client bundles. The configuration (`webpack.config.js` → `obfuscatorOptions`) is intentionally "minimal":
+```
+nc-base
 
-- variable/function names → hex (`identifierNamesGenerator: 'hexadecimal'`)
-- string literals hidden in a separate array, base64-encoded
-- **disabled**: `controlFlowFlattening`, `deadCodeInjection`, `selfDefending` — these provide stronger protection but noticeably slow down code execution, so they're left off for the sake of FiveM server performance
-
-If you want stronger obfuscation, flip these to `true` in `webpack.config.js` — keep in mind this will make the code run slower.
-
-## ox_inventory support
-
-- `src/server/inventory/InventoryManager.ts` is the single place for all ox_inventory interaction (`addItem`, `removeItem`, `giveItems`, `removeItems`, `canCarryItem`, `getItemCount`, `registerStash`).
-- **Starter kits**: `JobGrade`/`GangGrade` (`src/shared/types.ts`) support an optional `items: ItemStack[]` field. `JobManager.hire/fire/promote` and `GangManager.addMember/removeMember/promote` automatically give/remove these items (see examples in `config/jobs.ts` and `config/gangs.ts` — police get a radio + weapon, EMS get bandages, gangs get weapons).
-- **Items themselves** (name, weight, icon, etc.) still need to be defined in `ox_inventory`'s own `data/items.lua` file — our config only references item names (e.g. `'radio'`, `'weapon_pistol'`), it doesn't redefine them.
-- **Stashes**: `police_armory` is included as an example (registered in `main.ts`'s `onResourceStart` hook), visible only to players with the `police` job at grade ≥ 1. The client can open it with the `/armory` command.
-- **Manual giving**: the `nc-base:server:giveItem` net event lets bosses give items directly to a player.
-
-```ts
-// Example: give a player an item directly from code (e.g. a quest reward)
-InventoryManager.addItem(source, 'lockpick', 3);
+src/
+│
+├── server/
+│   ├── classes/
+│   │   └── Player.ts
+│   │
+│   ├── database/
+│   │   └── Database.ts
+│   │
+│   ├── inventory/
+│   │   └── InventoryManager.ts
+│   │
+│   ├── managers/
+│   │   ├── JobManager.ts
+│   │   └── GangManager.ts
+│   │
+│   ├── config/
+│   │   ├── jobs.ts
+│   │   └── gangs.ts
+│   │
+│   └── main.ts
+│
+├── client/
+│   └── main.ts
+│
+└── shared/
+    └── types.ts
 ```
 
-## Extending
+---
 
-- **New job**: add an entry to the `Jobs` object in `src/server/config/jobs.ts`.
-- **New gang**: add an entry to the `Gangs` object in `src/server/config/gangs.ts`.
-- **New event**: add an `onNet(...)` listener in `src/server/main.ts` (server) or `onNet(...)` in `src/client/main.ts` (client). To send from server to client, use `emitNet('event:name', source, data)`.
-- **New player fields**: extend the `PlayerRow` type in `src/shared/types.ts`, update the SQL schema, and the `Player` class's `toRow()`/constructor.
+# Player System
 
-## Examples of using this from other resources
+The Player class handles:
+
+- Player information
+- Cash
+- Bank
+- Job
+- Gang
+- Metadata
+- Identifiers
+- Database saving
+
+
+Example:
+
+```ts
+const player = NC.GetPlayer(source)
+
+console.log(player.cash)
+console.log(player.job)
+console.log(player.gang)
+```
+
+---
+
+# Player Metadata
+
+Metadata allows resources to store custom player data.
+
+Example:
+
+```ts
+player.setMeta("hunger", 75)
+player.setMeta("thirst", 50)
+player.setMeta("stress", 10)
+```
+
+Get metadata:
+
+```ts
+const hunger = player.getMeta("hunger")
+```
+
+Example:
+
+```json
+{
+    "hunger":75,
+    "thirst":50,
+    "stress":10,
+    "dead":false
+}
+```
+
+---
+
+# Jobs System
+
+Location:
+
+```
+src/server/config/jobs.ts
+```
+
+Supported:
+
+- Job grades
+- Salaries
+- Boss access
+- Starter items
+- Hiring
+- Firing
+- Promotions
+
+
+Example:
+
+```ts
+police: {
+    label: "Police",
+
+    grades: {
+        0: {
+            name: "Cadet",
+            salary: 500
+        },
+
+        4: {
+            name: "Chief",
+            boss: true,
+            salary: 2000
+        }
+    }
+}
+```
+
+---
+
+# Job Export
+
+Lua:
 
 ```lua
--- From a Lua resource
-local jobData = exports['nc-base']:GetJob(source)
-print(jobData.name, jobData.grade)
+local job = exports['nc-base']:GetJob(source)
+
+print(job.name)
+print(job.grade)
 ```
+
+Example return:
+
+```lua
+{
+    name = "police",
+    grade = 4,
+    label = "Police"
+}
+```
+
+---
+
+# Gang System
+
+Location:
+
+```
+src/server/config/gangs.ts
+```
+
+Features:
+
+- Gang grades
+- Territories
+- Members
+- Boss permissions
+- Starter equipment
+
+
+Example:
 
 ```ts
-// From a TS resource
-const gang = (global as any).exports['nc-base'].GetGang(source);
+ballas: {
+
+    label: "Ballas",
+
+    territory: "Grove Street",
+
+    grades: {
+        0: {
+            name:"Member"
+        }
+    }
+}
 ```
 
-## Note
+---
 
-This is a starter kit, not a full solution — things like a UI (NUI menus), voice,
-or vehicle ownership are missing. The structure is intentionally simple so you can
-quickly build it out to fit your server's needs.
+# Gang Export
+
+Lua:
+
+```lua
+local gang = exports['nc-base']:GetGang(source)
+
+print(gang.name)
+```
+
+---
+
+# Inventory System
+
+Powered by:
+
+```
+ox_inventory
+```
+
+Supported functions:
+
+```
+addItem()
+removeItem()
+giveItems()
+removeItems()
+canCarryItem()
+getItemCount()
+registerStash()
+```
+
+
+Example:
+
+```ts
+InventoryManager.addItem(
+    source,
+    "lockpick",
+    3
+)
+```
+
+---
+
+# Starter Kits
+
+Jobs and gangs can automatically give items.
+
+
+Example:
+
+```ts
+items:[
+    {
+        name:"radio",
+        amount:1
+    },
+
+    {
+        name:"weapon_pistol",
+        amount:1
+    }
+]
+```
+
+
+Items must exist inside:
+
+```
+ox_inventory/data/items.lua
+```
+
+---
+
+# Stashes
+
+Example stash:
+
+```
+police_armory
+```
+
+Can be restricted by:
+
+- Job
+- Grade
+- Permissions
+
+
+Example:
+
+```ts
+InventoryManager.registerStash(
+    "police_armory",
+    "Police Armory",
+    50,
+    100000
+)
+```
+
+---
+
+# Database System
+
+Uses:
+
+```
+oxmysql
+```
+
+
+Example:
+
+```ts
+const result =
+await Database.query(
+    "SELECT * FROM players WHERE id=?",
+    [id]
+)
+```
+
+---
+
+# Events
+
+## Server Event
+
+```ts
+onNet(
+    "nc-base:test",
+    (source,data)=>{
+
+        console.log(source)
+        console.log(data)
+
+    }
+)
+```
+
+---
+
+## Server To Client
+
+```ts
+emitNet(
+    "nc-base:update",
+    source,
+    data
+)
+```
+
+---
+
+## Client Event
+
+```ts
+onNet(
+    "nc-base:update",
+    (data)=>{
+
+        console.log(data)
+
+    }
+)
+```
+
+---
+
+# Exports API
+
+## Get Player
+
+Lua:
+
+```lua
+exports['nc-base']:GetPlayer(source)
+```
+
+
+---
+
+## Get Job
+
+```lua
+exports['nc-base']:GetJob(source)
+```
+
+
+---
+
+## Get Gang
+
+```lua
+exports['nc-base']:GetGang(source)
+```
+
+
+---
+
+## Add Item
+
+```lua
+exports['nc-base']:AddItem(
+    source,
+    "bread",
+    5
+)
+```
+
+
+---
+
+## Remove Item
+
+```lua
+exports['nc-base']:RemoveItem(
+    source,
+    "bread",
+    1
+)
+```
+
+---
+
+# TypeScript Imports
+
+Instead of:
+
+```ts
+../../server/classes/Player
+```
+
+Use:
+
+```ts
+import { Player } from '@/server/classes/Player';
+```
+
+
+Configured:
+
+```
+tsconfig.json
+webpack.config.js
+```
+
+---
+
+# Obfuscation
+
+Build uses:
+
+```
+webpack-obfuscator
+```
+
+
+Enabled:
+
+- Hexadecimal identifiers
+- String array encoding
+- Base64 strings
+
+
+Disabled:
+
+- controlFlowFlattening
+- deadCodeInjection
+- selfDefending
+
+
+Reason:
+
+Better FiveM performance.
+
+---
+
+# Creating Extensions
+
+
+## Add Job
+
+Edit:
+
+```
+src/server/config/jobs.ts
+```
+
+
+## Add Gang
+
+Edit:
+
+```
+src/server/config/gangs.ts
+```
+
+
+## Add Player Data
+
+Update:
+
+```
+src/shared/types.ts
+```
+
+Update:
+
+- SQL schema
+- Player constructor
+- Player save function
+
+---
+
+# Resource Example
+
+
+Lua:
+
+```lua
+local player =
+exports['nc-base']:GetPlayer(source)
+
+
+if player then
+
+    print(player.job.name)
+
+end
+```
+
+
+TypeScript:
+
+```ts
+const player =
+global.exports['nc-base']
+.GetPlayer(source)
+```
+
+---
+
+# Roadmap
+
+Planned:
+
+- Vehicle ownership
+- Housing system
+- Banking
+- Phone system
+- MDT
+- Character selector
+- Admin system
+- NUI framework
+
+
+---
+
+# License
+
+Custom FiveM framework.
+
+Free to modify and extend for your own server.
