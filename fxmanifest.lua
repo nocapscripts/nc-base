@@ -3,7 +3,7 @@ game 'gta5'
 lua54 'yes'
 
 name 'nc-base'
-author 'Sina'
+author 'NoCapSripts'
 version '0.1.0'
 description 'Custom FiveM framework TypeScriptis: playerid, jobid, gangid ja events'
 
